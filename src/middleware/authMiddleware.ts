@@ -4,10 +4,10 @@ import jwt from 'jsonwebtoken';
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   // Define public routes (no JWT required)
   const publicRoutes = [
-    '/api/auth/login',
-    '/api/auth/register/traveler',
-    '/api/auth/register/buyer',
-    '/api/auth/refresh',
+    '/auth/login',
+    '/auth/register/traveler',
+    '/auth/register/buyer',
+    '/auth/refresh',
     '/health',
   ];
 
