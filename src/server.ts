@@ -49,7 +49,7 @@ app.use(
 const userProxy = createProxyMiddleware({
   target: process.env.USER_SERVICE_URL || 'http://localhost:8082',
   changeOrigin: true,
-  pathRewrite: (path, req) => req.originalUrl,
+  pathRewrite: (path, req: any) => req.originalUrl || path,
 });
 
 app.use('/api/travelers', userProxy);
