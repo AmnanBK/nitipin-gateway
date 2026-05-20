@@ -62,6 +62,7 @@ app.use(
   createProxyMiddleware({
     target: process.env.PRODUCT_SERVICE_URL || 'http://localhost:8083',
     changeOrigin: true,
+    pathRewrite: (path, req: any) => req.originalUrl || path,
   })
 );
 
