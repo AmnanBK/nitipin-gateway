@@ -42,6 +42,7 @@ app.use(
   createProxyMiddleware({
     target: process.env.AUTH_SERVICE_URL || 'http://localhost:8081',
     changeOrigin: true,
+    pathRewrite: (path, req: any) => req.originalUrl || path,
   })
 );
 
