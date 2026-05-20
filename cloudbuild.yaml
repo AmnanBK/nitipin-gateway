@@ -1,0 +1,53 @@
+steps:
+  # Build the image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/jastip-registry/nitipin-gateway:$COMMIT_SHA'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/jastip-registry/nitipin-gateway:latest'
+      - '.'
+    id: 'build-gateway'
+
+  # Push the image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/jastip-registry/nitipin-gateway:$COMMIT_SHA'
+    id: 'push-gateway'
+    waitFor: ['build-gateway']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/jastip-registry/nitipin-gateway:latest'
+    id: 'push-gateway-latest'
+    waitFor: ['build-gateway']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'nitipin-gateway'
+      - '--image'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/jastip-registry/nitipin-gateway:$COMMIT_SHA'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+    id: 'deploy-gateway'
+    waitFor: ['push-gateway']
+
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/jastip-registry/nitipin-gateway:$COMMIT_SHA'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/jastip-registry/nitipin-gateway:latest'
+
+substitutions:
+  _REGION: us-central1
+
+options:
+  logging: CLOUD_LOGGING_ONLY
