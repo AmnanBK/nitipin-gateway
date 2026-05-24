@@ -16,12 +16,13 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
   // Actually, for simplicity in Gateway, we can just whitelist the auth routes.
   const isPublic = publicRoutes.some((route) => req.path === route || req.path.startsWith(route));
 
-  // Special case: GET /api/products, GET /api/countries and GET /api/travelers are public
+  // Special case: GET /api/products, GET /api/countries, GET /api/travelers and GET /api/reviews are public
   if (
     req.method === 'GET' &&
     (req.path.startsWith('/products') ||
       req.path.startsWith('/countries') ||
-      req.path.startsWith('/travelers'))
+      req.path.startsWith('/travelers') ||
+      req.path.startsWith('/reviews'))
   ) {
     return next();
   }
